@@ -1,15 +1,16 @@
 <script setup>
-import UploadProject from '../components/UploadProject.vue'
+import UploadProjectGuest from '../components/UploadProjectGuest.vue'
+
 </script>
 
 <template>
-  <main class="uploadproject">
-    <UploadProject />
+  <main class="uploadprojectguest">
+    <UploadProjectGuest/>
   </main>
 </template>
 
 <style scoped>
-.uploadproject {
+.uploadprojectguest {
   background-image: url('@/assets/GetStartedBackground.png');
   background-size: cover;
   background-position: center;
@@ -20,6 +21,7 @@ import UploadProject from '../components/UploadProject.vue'
   align-items: center;
   position: relative;
 }
+
 </style>
 
 

@@ -1,61 +1,61 @@
 <template>
   <div class="signin-container">
-    <h2>{{ isRegistering ? 'Registracija' : 'Prijava' }}</h2>
+<h2>{{ isRegistering ? 'Registracija' : 'Prijava' }}</h2>
 
-    <!-- Prikazivanje obavijesti -->
-    <div v-if="message" class="alert" :class="alertType">{{ message }}</div>
+<!-- Prikazivanje obavijesti -->
+<div v-if="message" class="alert" :class="alertType">{{ message }}</div>
 
-    <!-- Ako je registracija, prikazujemo formu za registraciju -->
-    <div class="form-wrapper">
-      <div v-if="isRegistering">
-        <form @submit.prevent="registerUser">
-          <div class="form-group">
-            <label for="username">Korisničko ime</label>
-            <input v-model="username" type="text" id="username" placeholder="Unesi korisničko ime" required />
-          </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input v-model="email" type="email" id="email" placeholder="Unesi email" required />
-          </div>
-          <div class="form-group">
-            <label for="password">Lozinka</label>
-            <input v-model="password" type="password" id="password" placeholder="Unesi lozinku" required />
-          </div>
-          <div class="form-group">
-            <button type="submit">Registriraj se</button>
-          </div>
-          <div class="toggle">
-            <button @click="toggleForm" class="link-button">Već imaš račun? Prijavi se</button>
-          </div>
-        </form>
+<!-- Ako je registracija, prikazujemo formu za registraciju -->
+<div class="form-wrapper">
+  <div v-if="isRegistering">
+    <form @submit.prevent="registerUser">
+      <div class="form-group">
+        <label for="username">Korisničko ime</label>
+        <input v-model="username" type="text" id="username" placeholder="Unesi korisničko ime" required />
       </div>
-
-      <!-- Ako nije registracija, prikazujemo formu za prijavu -->
-      <div v-else>
-        <form @submit.prevent="loginUser">
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input v-model="email" type="email" id="email" placeholder="Unesi email" required />
-          </div>
-          <div class="form-group">
-            <label for="password">Lozinka</label>
-            <input v-model="password" type="password" id="password" placeholder="Unesi lozinku" required />
-          </div>
-          <div class="form-group">
-            <button type="submit">Prijavi se</button>
-          </div>
-          <div class="toggle">
-            <button @click="toggleForm" class="link-button">Nemate račun? Registrirajte se</button>
-          </div>
-        </form>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input v-model="email" type="email" id="email" placeholder="Unesi email" required />
       </div>
-    </div>
-
-    <!-- Gosti prijava -->
-    <div class="guest-login">
-      <button @click="guestLogin" class="link-button">Prijavi se kao gost</button>
-    </div>
+      <div class="form-group">
+        <label for="password">Lozinka</label>
+        <input v-model="password" type="password" id="password" placeholder="Unesi lozinku" required />
+      </div>
+      <div class="form-group">
+        <button type="submit">Registriraj se</button>
+      </div>
+      <div class="toggle">
+        <button @click="toggleForm" class="link-button">Već imaš račun? Prijavi se</button>
+      </div>
+    </form>
   </div>
+
+  <!-- Ako nije registracija, prikazujemo formu za prijavu -->
+  <div v-else>
+    <form @submit.prevent="loginUser">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input v-model="email" type="email" id="email" placeholder="Unesi email" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Lozinka</label>
+        <input v-model="password" type="password" id="password" placeholder="Unesi lozinku" required />
+      </div>
+      <div class="form-group">
+        <button type="submit">Prijavi se</button>
+      </div>
+      <div class="toggle">
+        <button @click="toggleForm" class="link-button">Nemate račun? Registrirajte se</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Gosti prijava -->
+<div class="guest-login">
+  <button @click="guestLogin" class="link-button">Prijavi se kao gost</button>
+</div>
+</div>
 </template>
 
 <script>
@@ -103,6 +103,7 @@ export default {
         });
 
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("email", this.email); // Pohranjujemo email u localStorage
         this.message = "Prijava uspješna!";
         this.alertType = "success";
 
@@ -126,7 +127,7 @@ export default {
         this.message = "Prijava kao gost uspješna!";
         this.alertType = "success";
         setTimeout(() => {
-          this.$router.push("/uploadproject");
+          this.$router.push("/uploadprojectguest");
         }, 2000);
       } catch (error) {
         this.message = "Greška pri prijavi gosta: " + (error.response?.data?.message || "Pokušajte ponovno.");

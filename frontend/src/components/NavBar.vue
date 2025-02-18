@@ -1,48 +1,15 @@
 <template>
   <v-container fluid class="navbar">
-    <!-- V-row koristi se za horizontalno poravnavanje elemenata u navbaru -->
     <v-row align="center" justify="space-between" class="navbar-row">
-
-      <!-- Logo u navbaru, koristi se v-col da bi se odredila širina kolone -->
       <v-col cols="auto" class="logo-col">
-        <img class="logo" src="@/assets/Logo.svg" alt="Logo" /> <!-- Logo slike -->
+        <img class="logo" src="@/assets/Logo.svg" alt="Logo" />
       </v-col>
 
-      <!-- Navigacijske stavke i dugme -->
       <v-col cols="auto" class="nav-links-col">
-
-        <!-- Hamburger meni prikazuje se na manjim ekranima -->
-        <v-menu v-if="isMobile" offset-y>
-          <!-- Activator omogućuje otvaranje menija klikom na ikonu -->
-          <template v-slot:activator="{ on }">
-            <v-btn icon v-on="on">
-              <v-icon>mdi-menu</v-icon> <!-- Ikona hamburger menija -->
-            </v-btn>
-          </template>
-
-          <!-- Lista stavki u meniju -->
-          <v-list>
-            <v-list-item v-for="item in navItems" :key="item">
-              <v-list-item-title>{{ item }}</v-list-item-title>
-            </v-list-item>
-
-            <!-- Dugme u meniju -->
-            <v-list-item>
-              <Button class="nav-button" />
-            </v-list-item>
-          </v-list>
-        </v-menu>
-
-        <!-- Standardna navigacija koja se prikazuje na većim ekranima -->
-        <v-row v-else align="center" justify="center" class="nav-links">
-          <!-- Iteriranje kroz sve stavke u navItems array-u i prikazivanje svake -->
-          <v-col v-for="item in navItems" :key="item" cols="auto" class="nav-item-col">
-            <span class="nav-item">{{ item }}</span>
-          </v-col>
-
-          <!-- Dugme u navigaciji -->
-          <v-col cols="auto">
-            <Button class="nav-button" />
+        <v-row align="center" justify="center" class="nav-links">
+          <v-col v-for="item in navItems" :key="item.name" cols="auto" class="nav-item-col">
+            <!-- Koristi router-link za navigaciju -->
+            <router-link :to="item.link" class="nav-item">{{ item.name }}</router-link>
           </v-col>
         </v-row>
       </v-col>
@@ -51,22 +18,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';  // Uvoz Vue funkcija za rad sa reaktivnim podacima
-import Button from "@/components/NavBarButton.vue";  // Importiranje dugmeta za navigaciju
-
 // Lista stavki u navigaciji
-const navItems = ["About Us", "Contact"];
-
-// Varijabla koja prati širinu prozora
-const screenWidth = ref(window.innerWidth);
-
-// Praćenje promjena u veličini ekrana
-window.addEventListener('resize', () => {
-  screenWidth.value = window.innerWidth;  // Ažuriranje širine ekrana kad se prozor promijeni
-});
-
-// Izračunava da li je ekran manji od ili jednak 768px
-const isMobile = computed(() => screenWidth.value <= 768);
+const navItems = [
+  { name: "Home", link: "/" },
+  { name: "About Us", link: "/about-us" },
+  { name: "Contact", link: "/contact" }
+];
 </script>
 
 <style scoped>
