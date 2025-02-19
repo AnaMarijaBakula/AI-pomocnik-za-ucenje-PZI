@@ -11,7 +11,7 @@
               programmer. Build smarter with our support!
             </span>
           </div>
-          <router-link to="/uploadproject" class="button" style="text-decoration: none">
+          <router-link to="/SignIn" class="button" style="text-decoration: none">
             <span class="text_3">Get Started</span>
           </router-link>
         </FrameCenter>

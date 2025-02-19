@@ -4,14 +4,18 @@
       <v-col :cols="12" :md="10" :lg="6" :xl="4">
         <FrameCenter>
           <div class="main-content">
-            <span class="title">Upload your project here</span>
-
-            <!-- Prikazivanje statusa gosta (preostali projekti i odbrojavanje vremena) -->
-            <div v-if="message" class="alert">{{ message }}</div>
-            <div v-if="isGuest && projectsLeft > 0">
-              <p>Preostali projekti: {{ projectsLeft }}</p>
-              <p>Vrijeme do isteka: {{ remainingTime }}</p>
+            <!-- Prikazivanje pohranjenog e-maila korisnika sa ikonom korisnika -->
+            <div v-if="email" class="user-profile">
+              <!-- Ikona korisnika -->
+              <v-avatar size="30">
+                <v-img src="https://img.freepik.com/premium-wektory/ikona-profilu-osob_718801-114.jpg?w=360" alt="User Icon" />
+              </v-avatar>
+              <div class="user-info">
+                <p>Dobrodošli, <strong>{{ email }}</strong></p>
+              </div>
             </div>
+
+            <span class="title">Upload your project here</span>
 
             <div class="upload-file" @dragover.prevent @drop="handleDrop">
               <span class="text_1">Drag & Drop your project folder</span>
@@ -32,6 +36,7 @@
               </ul>
             </div>
 
+            <button @click="uploadFilesToBackend">Upload Project</button>
           </div>
         </FrameCenter>
       </v-col>
@@ -40,97 +45,50 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import FrameCenter from '@/components/FrameCenter.vue';
 
-const files = ref([]); // Reaktivne varijable
-const projectsLeft = ref(0); // Preostali projekti
-const remainingTime = ref(""); // Odbrojavanje vremena
-const message = ref(""); // Poruka o statusu gosta
-const isGuest = ref(false); // Provjera da li je korisnik gost
+const files = ref([]);
+const email = ref(""); // Email varijabla kao ref
 
-// Funkcija koja provjerava status gosta
-const checkGuestStatus = () => {
-  const guestData = JSON.parse(localStorage.getItem("guestData"));
-  if (guestData) {
-    isGuest.value = true; // Korisnik je gost
-    projectsLeft.value = guestData.projectsLeft;  // Preostali projekti
-    const expiresAt = guestData.expiresAt;        // Datum isteka
-    const currentTime = new Date().getTime();
-
-    if (expiresAt < currentTime) {
-      // Ako je gostu isteklo vrijeme
-      localStorage.removeItem("guestData");
-      message.value = "Vrijeme gosta je isteklo!";
-    } else if (projectsLeft.value <= 0) {
-      // Ako gost nema više preostalih projekata
-      message.value = "Gost je iskoristio sve projekte!";
-    } else {
-      // Ako je vrijeme još uvijek važeće i ima preostalih projekata
-      remainingTime.value = calculateRemainingTime(expiresAt);
-    }
-  }
+// Funkcija za selektiranje datoteka
+const handleFileSelect = (event) => {
+  files.value = Array.from(event.target.files);
 };
 
-// Funkcija za izračunavanje vremena do isteka za gosta (sati, minute, sekunde)
-const calculateRemainingTime = (expiresAt) => {
-  const currentTime = new Date().getTime();
-  const timeLeft = expiresAt - currentTime;
-
-  if (timeLeft <= 0) {
-    return "Vrijeme je isteklo!";
-  }
-
-  const hours = Math.floor(timeLeft / (1000 * 60 * 60)); // Sati
-  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60)); // Minute
-  const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000); // Sekunde
-
-  return `${hours}h ${minutes}m ${seconds}s`;
-};
-
-// Funkcija za slanje datoteka na backend
+// Funkcija za upload datoteka
 const uploadFilesToBackend = async () => {
   if (files.value.length === 0) {
     alert('Nema datoteka za upload.');
     return;
   }
 
-  if (projectsLeft.value <= 0) {
-    alert('Nemate preostalih projekata za upload.');
-    return;
-  }
-
-  const formData = new FormData(); // Kreira novi FormData objekt
+  const formData = new FormData();
   files.value.forEach(file => {
-    formData.append('files', file); // Ključ je 'files', a value je datoteka
+    formData.append('files', file);
   });
 
   try {
     const response = await axios.post('http://localhost:5001/api/upload', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data', // Postavljanje odgovarajuće Content-Type
+        'Content-Type': 'multipart/form-data',
       },
     });
     alert('Datoteke su uspješno poslane!');
-    console.log(response.data);
   } catch (error) {
     console.error('Greška prilikom slanja datoteka:', error);
     alert('Došlo je do greške prilikom slanja datoteka.');
   }
 };
 
-// Pokreni provjeru statusa gosta kad se komponenta montira
-let intervalId;
-
+// Funkcija koja se poziva kad se komponenta montira
 onMounted(() => {
-  checkGuestStatus();
-  intervalId = setInterval(checkGuestStatus, 1000); // Ažuriraj svaki sekundu
-});
-
-// Očisti interval kada komponenta bude uništena
-onBeforeUnmount(() => {
-  clearInterval(intervalId);
+  // Provjerava da li postoji email u localStorage
+  const savedEmail = localStorage.getItem("email");
+  if (savedEmail) {
+    email.value = savedEmail;  // Ako postoji, postavi email u ref varijablu
+  }
 });
 </script>
 
@@ -197,12 +155,39 @@ li {
   color: #333;
 }
 
-.alert {
-  background-color: #f44336;
+button {
+  padding: 10px 20px;
+  background-color: #624f82;
   color: white;
-  padding: 10px;
-  font-weight: bold;
+  border: none;
   border-radius: 5px;
-  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #503c66;
+}
+
+/* Razdvajanje dijela za korisničke informacije */
+.user-profile {
+  display: flex;
+  align-items: center;
+  background-color: #e3e3e3;
+  padding: 10px 15px;
+  border-radius: 25px;
+  width: 100%;
+  max-width: 350px;
+  justify-content: center;
+  gap: 15px;
+  position: relative;
+  top: -100px; /* Pomak iznad bijelog okvira */
+}
+
+.user-info p {
+  font-size: 16px;
+  font-family: 'DM Sans', sans-serif;
+  color: #333;
+  margin: 0;
+  text-align: left;
 }
 </style>
