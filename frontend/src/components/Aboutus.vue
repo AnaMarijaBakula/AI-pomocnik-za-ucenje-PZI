@@ -1,5 +1,6 @@
 <template>
-  <v-container fluid class="about-us">
+  <div class="about-us">
+  <v-container >
     <v-row align="center" justify="center">
       <!-- Sekcija za Uvod -->
       <v-col cols="12" class="intro-section">
@@ -41,6 +42,7 @@
 
     </v-row>
   </v-container>
+  </div>
 </template>
 <style scoped>
 .about-us {
@@ -108,3 +110,5 @@
   }
 }
 </style>
+<script setup lang="ts">
+</script>

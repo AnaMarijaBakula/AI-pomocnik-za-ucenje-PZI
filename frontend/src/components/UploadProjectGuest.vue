@@ -1,4 +1,5 @@
 <template>
+  <div class="uploud-project-guest">
   <v-container>
     <v-row justify="center">
       <v-col :cols="12" :md="10" :lg="6" :xl="4">
@@ -31,12 +32,13 @@
                 <li v-for="(file, index) in files" :key="index">{{ file.name }}</li>
               </ul>
             </div>
-
+              <button @click="uploadFilesToBackend">Upload Project</button>
           </div>
         </FrameCenter>
       </v-col>
     </v-row>
   </v-container>
+  </div>
 </template>
 
 <script setup>
@@ -49,6 +51,14 @@ const projectsLeft = ref(0); // Preostali projekti
 const remainingTime = ref(""); // Odbrojavanje vremena
 const message = ref(""); // Poruka o statusu gosta
 const isGuest = ref(false); // Provjera da li je korisnik gost
+
+// Funkcija koja poziva input za odabir datoteka
+const triggerFileInput = () => {
+  const fileInput = document.getElementById('fileInput');
+  if (fileInput) {
+    fileInput.click();
+  }
+};
 
 // Funkcija koja provjerava status gosta
 const checkGuestStatus = () => {
@@ -135,18 +145,32 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.uploud-project-guest {
+  background-image: url('@/assets/GetStartedBackground.png');
+  background-size: cover;
+  background-position: center;
+  height: 100vh; /* Pokriva cijeli ekran */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 20px; /* Dodano za malo razmaka */
+}
+
 .main-content {
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  max-width: 90%;
+  gap: 15px;
+  max-width: 100%;
+  padding: 20px;
 }
 
 .title {
-  font-size: clamp(16px, 5vw, 40px);
+  font-size: clamp(18px, 5vw, 36px);
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   color: #333333;
@@ -154,37 +178,33 @@ onBeforeUnmount(() => {
 }
 
 .upload-file {
-  width: 510px;
-  height: 175px;
+  width: 100%;
+  max-width: 500px;
+  min-width: 100px;
+  height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 19px;
+  padding: 15px;
   gap: 10px;
-  flex-shrink: 0;
-  overflow: hidden;
   border-radius: 10px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #624f82;
+  border: 1px solid #624f82;
   background-color: #ffffff;
-  position: relative;
+  text-align: center;
 }
 
 .text_1, .text_2, .text_3 {
-  width: 100%;
-  font-size: clamp(12px, 4vw, 20px);
+  font-size: clamp(14px, 4vw, 20px);
   font-family: 'DM Sans', sans-serif;
   color: #8ca2c0;
   text-align: center;
-  line-height: 32px;
 }
 
 .text_3 {
   color: #624F82;
-  font-family: "DM Sans", sans-serif;
   font-size: 16px;
-  letter-spacing: 1px;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 ul {
@@ -197,13 +217,31 @@ li {
   color: #333;
 }
 
-.alert {
-  background-color: #f44336;
+button {
+  padding: 10px 20px;
+  background-color: #624f82;
   color: white;
-  padding: 10px;
-  font-weight: bold;
+  border: none;
   border-radius: 5px;
-  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #503c66;
+}
+
+.guest-status p {
+  font-size: 16px;
+  color: #333;
+  margin: 5px 0;
+}
+
+@media (max-width: 600px) {
+  .upload-file {
+    max-width: 70%;
+    padding: 10px;
+  }
 }
 </style>
+
 

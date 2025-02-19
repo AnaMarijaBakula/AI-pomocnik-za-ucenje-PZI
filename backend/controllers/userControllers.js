@@ -26,7 +26,6 @@ const registerUser = async (req, res) => {
         res.status(500).json({ message: "Greška na serveru", error: error.message });
     }
 };
-
 // Prijava korisnika
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
@@ -35,9 +34,11 @@ const loginUser = async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ message: "Korisnik nije pronađen" });
 
+        // Provjera lozinke
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Neispravna lozinka" });
 
+        // Ako je korisnik admin, nema problema sa prijavom
         const token = jwt.sign({ id: user._id, role: user.role }, SECRET_KEY, { expiresIn: "7d" });
 
         res.status(200).json({ message: `Prijava uspješna (${user.role})`, token, role: user.role });
@@ -45,6 +46,7 @@ const loginUser = async (req, res) => {
         res.status(500).json({ message: "Greška na serveru" });
     }
 };
+
 
 // Prijava kao gost (samo klikom, bez registracije)
 const guestLogin = async (req, res) => {

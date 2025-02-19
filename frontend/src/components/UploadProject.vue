@@ -6,19 +6,18 @@
           <div class="main-content">
             <!-- Prikazivanje pohranjenog e-maila korisnika sa ikonom korisnika -->
             <div v-if="email" class="user-profile">
-              <!-- Ikona korisnika -->
-              <v-avatar size="30">
-                <v-img src="https://img.freepik.com/premium-wektory/ikona-profilu-osob_718801-114.jpg?w=360" alt="User Icon" />
+              <v-avatar size="40">
+                <v-img src="https://i.pinimg.com/736x/d4/c2/9b/d4c29bce80764dc50e72a5f87c255dab.jpg" alt="User Icon" />
               </v-avatar>
               <div class="user-info">
-                <p>Dobrodošli, <strong>{{ email }}</strong></p>
+                <p>Welcome, <strong>{{ email }}</strong></p>
               </div>
             </div>
 
             <span class="title">Upload your project here</span>
 
             <div class="upload-file" @dragover.prevent @drop="handleDrop">
-              <span class="text_1">Drag & Drop your project folder</span>
+              <span class="text_1" @click="triggerFileInput">Drag & Drop your project folder</span>
               <span class="text_2">OR</span>
               <span class="text_3" @click="triggerFileInput">Select Project Folder</span>
 
@@ -50,14 +49,21 @@ import axios from 'axios';
 import FrameCenter from '@/components/FrameCenter.vue';
 
 const files = ref([]);
-const email = ref(""); // Email varijabla kao ref
+const email = ref("");
 
-// Funkcija za selektiranje datoteka
+// Funkcija za odabir datoteka
 const handleFileSelect = (event) => {
   files.value = Array.from(event.target.files);
 };
 
-// Funkcija za upload datoteka
+// Funkcija koja poziva input za odabir datoteka
+const triggerFileInput = () => {
+  const fileInput = document.getElementById('fileInput');
+  if (fileInput) {
+    fileInput.click();
+  }
+};
+
 const uploadFilesToBackend = async () => {
   if (files.value.length === 0) {
     alert('Nema datoteka za upload.');
@@ -70,7 +76,7 @@ const uploadFilesToBackend = async () => {
   });
 
   try {
-    const response = await axios.post('http://localhost:5001/api/upload', formData, {
+    await axios.post('http://localhost:5001/api/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -82,12 +88,10 @@ const uploadFilesToBackend = async () => {
   }
 };
 
-// Funkcija koja se poziva kad se komponenta montira
 onMounted(() => {
-  // Provjerava da li postoji email u localStorage
   const savedEmail = localStorage.getItem("email");
   if (savedEmail) {
-    email.value = savedEmail;  // Ako postoji, postavi email u ref varijablu
+    email.value = savedEmail;
   }
 });
 </script>
@@ -99,12 +103,13 @@ onMounted(() => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  max-width: 90%;
+  gap: 15px;
+  max-width: 100%;
+  padding: 20px;
 }
 
 .title {
-  font-size: clamp(16px, 5vw, 40px);
+  font-size: clamp(18px, 5vw, 36px);
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   color: #333333;
@@ -112,37 +117,33 @@ onMounted(() => {
 }
 
 .upload-file {
-  width: 510px;
-  height: 175px;
+  width: 100%;
+  max-width: 500px;
+  min-width: 280px;
+  height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 19px;
+  padding: 15px;
   gap: 10px;
-  flex-shrink: 0;
-  overflow: hidden;
   border-radius: 10px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #624f82;
+  border: 1px solid #624f82;
   background-color: #ffffff;
-  position: relative;
+  text-align: center;
 }
 
 .text_1, .text_2, .text_3 {
-  width: 100%;
-  font-size: clamp(12px, 4vw, 20px);
+  font-size: clamp(14px, 4vw, 20px);
   font-family: 'DM Sans', sans-serif;
   color: #8ca2c0;
   text-align: center;
-  line-height: 32px;
 }
 
 .text_3 {
   color: #624F82;
-  font-family: "DM Sans", sans-serif;
   font-size: 16px;
-  letter-spacing: 1px;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 ul {
@@ -168,26 +169,36 @@ button:hover {
   background-color: #503c66;
 }
 
-/* Razdvajanje dijela za korisničke informacije */
 .user-profile {
   display: flex;
   align-items: center;
-  background-color: #e3e3e3;
+  background-color: #e2e9f3;
   padding: 10px 15px;
   border-radius: 25px;
-  width: 100%;
-  max-width: 350px;
-  justify-content: center;
-  gap: 15px;
-  position: relative;
-  top: -100px; /* Pomak iznad bijelog okvira */
+  max-width: 90%;
+  width: fit-content;
+  gap: 10px;
 }
 
 .user-info p {
-  font-size: 16px;
+  font-size: clamp(14px, 4vw, 18px);
   font-family: 'DM Sans', sans-serif;
   color: #333;
   margin: 0;
-  text-align: left;
+}
+
+@media (max-width: 600px) {
+  .upload-file {
+    max-width: 90%;
+    padding: 10px;
+  }
+
+  .user-profile {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 5px;
+    padding: 10px;
+  }
 }
 </style>

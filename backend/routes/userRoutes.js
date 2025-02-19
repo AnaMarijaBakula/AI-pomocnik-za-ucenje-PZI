@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, guestLogin, checkAuth, userMiddleware, checkUser} = require('../controllers/userControllers');
+const { registerUser, loginUser, guestLogin, userMiddleware, checkUser} = require('../controllers/userControllers');
 
 // Ruta za registraciju korisnika
 router.post('/register', registerUser);

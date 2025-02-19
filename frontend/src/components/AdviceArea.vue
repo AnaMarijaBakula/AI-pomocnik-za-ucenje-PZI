@@ -1,26 +1,3 @@
-<script setup>
-defineProps(['style']);
-import { VCard, VCardText, VCardTitle } from 'vuetify/components';
-import MonacoEditor from "@/components/MonacoEditor.vue";
-
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
-
-const adviceList = ref([]); // Ovdje ćemo pohraniti podatke iz API-ja
-
-const fetchAdvice = async () => {
-  try {
-    const response = await axios.get('http://localhost:5001/api/advice');
-    adviceList.value = response.data.advice;
-  } catch (error) {
-    console.error('Error fetching advice:', error);
-  }
-};
-
-onMounted(fetchAdvice);
-
-</script>
-
 <template>
   <div class="hero">
     <div class="frame_5">
@@ -54,7 +31,28 @@ onMounted(fetchAdvice);
     </div>
   </div>
 </template>
+<script setup>
+defineProps(['style']);
+import { VCard, VCardText, VCardTitle } from 'vuetify/components';
+import MonacoEditor from "@/components/MonacoEditor.vue";
 
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+
+const adviceList = ref([]); // Ovdje ćemo pohraniti podatke iz API-ja
+
+const fetchAdvice = async () => {
+  try {
+    const response = await axios.get('http://localhost:5001/api/advice');
+    adviceList.value = response.data.advice;
+  } catch (error) {
+    console.error('Error fetching advice:', error);
+  }
+};
+
+onMounted(fetchAdvice);
+
+</script>
 <style scoped>
 * {
   box-sizing: border-box;
